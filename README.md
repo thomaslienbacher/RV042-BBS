@@ -1,3 +1,11 @@
+# RV042 BBS
+
+This is a fork / further development of the [HuskyBBS](https://github.com/hdogan/HuskyBBS) BBS
+so it can run on a Linksys RV042 Router using a custom musl libc.
+All modifications are licensed under AGPL-3.0.
+
+# Original README Contents:
+
 Husky BBS
 =========
 Ancient telnet based bulletin board system written in ANSI-C language. Some parts of code were delivered from

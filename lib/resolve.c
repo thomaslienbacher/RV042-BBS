@@ -47,31 +47,26 @@ typedef unsigned char bool;
 
 #define IDENT_PORT 113
 
-char *resolve_address( int address )
-{
+char *resolve_address(int address) {
     static char addr_str[256];
     struct hostent *from;
     int addr;
 
     if ((from = gethostbyaddr((char *) &address, sizeof(address), AF_INET))
-	!= NULL)
-    {
-	strcpy(addr_str, strcmp(from->h_name, "localhost") ? from->h_name :
-	       "localhost");
-    }
-    else
-    {
-	addr = ntohl(address);
-	sprintf(addr_str, "%d.%d.%d.%d",
-	    (addr >> 24) & 0xFF, (addr >> 16) & 0xFF,
-	    (addr >> 8 ) & 0xFF, (addr      ) & 0xFF);
+        != NULL) {
+        strcpy(addr_str, strcmp(from->h_name, "localhost") ? from->h_name :
+                         "localhost");
+    } else {
+        addr = ntohl(address);
+        sprintf(addr_str, "%d.%d.%d.%d",
+                (addr >> 24) & 0xFF, (addr >> 16) & 0xFF,
+                (addr >> 8) & 0xFF, (addr) & 0xFF);
     }
 
     return addr_str;
 }
 
-char *resolve_user( int address, sh_int local_port, sh_int remote_port )
-{
+char *resolve_user(int address, sh_int local_port, sh_int remote_port) {
     char request[255], status[32], errtype[32];
     static char user[256];
     int sd, id, i;
@@ -87,25 +82,22 @@ char *resolve_user( int address, sh_int local_port, sh_int remote_port )
     gettimeofday(&lasttime, NULL);
 
     sock.sin_addr.s_addr = address;
-    sock.sin_port	 = htons(IDENT_PORT);
-    sock.sin_family	 = AF_INET;
+    sock.sin_port = htons(IDENT_PORT);
+    sock.sin_family = AF_INET;
 
-    if ((sd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    {
-	return "";
+    if ((sd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        return "";
     }
 
-    if ((id = connect(sd, (struct sockaddr *) &sock, sizeof(sock))) < 0)
-    {
-	close(sd);
-	return "";
+    if ((id = connect(sd, (struct sockaddr *) &sock, sizeof(sock))) < 0) {
+        close(sd);
+        return "";
     }
 
     sprintf(request, "%d,%d", remote_port, local_port);
-    if ((i = send(sd, &request, strlen(request) + 1, 0)) < 0)
-    {
-	close(sd);
-	return "";
+    if ((i = send(sd, &request, strlen(request) + 1, 0)) < 0) {
+        close(sd);
+        return "";
     }
 
     FD_ZERO(&in_set);
@@ -115,79 +107,70 @@ char *resolve_user( int address, sh_int local_port, sh_int remote_port )
 
     gettimeofday(&timeout, NULL);
     usecDelta = ((int) lasttime.tv_usec) - ((int) timeout.tv_usec)
-	      + 1000000 * 60;
-    secDelta  = ((int) lasttime.tv_sec) - ((int) timeout.tv_sec);
+                + 1000000 * 60;
+    secDelta = ((int) lasttime.tv_sec) - ((int) timeout.tv_sec);
 
-    while (usecDelta < 0)
-    {
-	usecDelta += 1000000;
-	secDelta  -= 1;
+    while (usecDelta < 0) {
+        usecDelta += 1000000;
+        secDelta -= 1;
     }
 
-    while (usecDelta > 1000000)
-    {
-	usecDelta -= 1000000;
-	secDelta  += 1;
+    while (usecDelta > 1000000) {
+        usecDelta -= 1000000;
+        secDelta += 1;
     }
 
     timeout = nulltime;
     timeout.tv_usec = usecDelta;
-    timeout.tv_sec  = secDelta;
+    timeout.tv_sec = secDelta;
 
-    if ((i = select(sd+1, &in_set, &out_set, NULL, &timeout)) < 0)
-    {
-	close(sd);
-	return "";
+    if ((i = select(sd + 1, &in_set, &out_set, NULL, &timeout)) < 0) {
+        close(sd);
+        return "";
     }
 
     gettimeofday(&lasttime, NULL);
 
-    if (i == 0)
-    {
-	close(sd);
-	return "";
+    if (i == 0) {
+        close(sd);
+        return "";
     }
 
-    if ((i = recv(sd, &request, 255, 0)) < 0)
-    {
-	close(sd);
-	return "";
+    if ((i = recv(sd, &request, 255, 0)) < 0) {
+        close(sd);
+        return "";
     }
 
     close(sd);
 
     if ((i = sscanf(request, "%hd , %hd : %s : %s : %s",
-	&peer_port, &my_port, status, errtype, user)) < 5)
-    {
-	return "";
+                    &peer_port, &my_port, status, errtype, user)) < 5) {
+        return "";
     }
 
-    if (strcmp(status, "USERID"))
-    {
-	return "";
+    if (strcmp(status, "USERID")) {
+        return "";
     }
 
     return user;
 }
 
-int main( int argc, char *argv[] )
-{
+int main(int argc, char *argv[]) {
     sh_int local, remote;
     int ip;
     char *address, *user;
 
-    if (argc != 4)
-    {
-	printf("unknown host\n\r");
-	exit(0);
+    if (argc != 4) {
+        printf("unknown host\n\r");
+        exit(0);
     }
 
-    local	= atoi(argv[1]);
-    ip		= atoi(argv[2]);
-    remote	= atoi(argv[3]);
+    local = atoi(argv[1]);
+    ip = atoi(argv[2]);
+    remote = atoi(argv[3]);
 
-    address	= resolve_address(ip);
-    user	= resolve_user(ip, local, remote);
+    address = resolve_address(ip);
+    user = resolve_user(ip, local, remote);
 
     printf("%s %s\n\r", address, user);
     exit(0);
