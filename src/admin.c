@@ -964,6 +964,7 @@ void validate_mail(USER_DATA *usr, VALIDATE_DATA *pValidate) {
     fclose(fp);
 
     fpReserve = fopen(NULL_FILE, "r");
+    // TODO: sendmail wont work on the router
     sprintf(mBuf, "sendmail -t < %s", buf);
     if (!(fpMail = popen(mBuf, "r"))) {
         bbs_bug("Validate_mail: Could not open to read %s", mBuf);

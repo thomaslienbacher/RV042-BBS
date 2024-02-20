@@ -461,6 +461,7 @@ extern char log_buf[];
 extern char str_empty[1];
 extern time_t current_time;
 extern time_t boot_time_t;
+// TODO: why is this buffer so large?
 extern char boot_time[STRING_LENGTH];
 extern int last_note_vnum;
 extern FILE *fpReserve;
@@ -840,7 +841,7 @@ bool is_turkish(USER_DATA *usr);
  * Data files user by the server.
  */
 #define TEMP_FILE        "user/bbstmp"
-#define TEMP_DIR        "../tmp/"
+#define TEMP_DIR        "tmp/"
 #define USER_DIR        "user/"
 #define CLIP_DIR        "clip/"
 #define NOTE_DIR        "boards/"

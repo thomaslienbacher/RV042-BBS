@@ -147,6 +147,7 @@ void resolve_kill(DESC_DATA *d) {
     }
 }
 
+// TODO: remove resolve functionality
 void create_resolve(DESC_DATA *d, long ip, sh_int port) {
     int fds[2];
     pid_t pid;

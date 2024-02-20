@@ -495,7 +495,8 @@ bool load_user(DESC_DATA *d, char *name) {
     clear_user(usr);
     found = FALSE;
 
-    fclose(fpReserve);
+    // TODO: why do we close this here
+    //fclose(fpReserve);
     sprintf(strsave, "%s%s", USER_DIR, capitalize(name));
     if ((fp = fopen(strsave, "r")) != NULL) {
         found = TRUE;
@@ -548,6 +549,7 @@ bool load_user(DESC_DATA *d, char *name) {
                         break;
                     }
                     if (!str_cmp(word, "End")) {
+                        fclose(fp);
                         return found;
                     }
                     break;
@@ -687,10 +689,13 @@ bool load_user(DESC_DATA *d, char *name) {
                 fread_to_eol(fp);
             }
         }
+
+        // we never reach this code
         fclose(fp);
     }
 
-    fpReserve = fopen(NULL_FILE, "r");
+    //fpReserve = fopen(NULL_FILE, "r");
+    fclose(fp);
 
     return found;
 }
@@ -789,9 +794,6 @@ void user_update(void) {
         }
 
         usr_next = usr->next;
-
-        if (!usr)
-            return;
 
         save_user(usr);
 
@@ -919,6 +921,7 @@ void free_buffer(USER_DATA *pUser) {
     return;
 }
 
+// TODO: remove function to reduce complexity
 bool is_turkish(USER_DATA *usr) {
     if (IS_TOGGLE(usr, TOGGLE_TURK))
         return TRUE;

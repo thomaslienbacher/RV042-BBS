@@ -1280,6 +1280,7 @@ void do_reboot(USER_DATA *usr, char *argument) {
 
     sprintf(p_buf, "%d", port);
     sprintf(c_buf, "%d", control);
+    // TODO: this will fail due to the EXE_FILE path
     execl(EXE_FILE, "bbs", p_buf, "copyover", c_buf, (char *) NULL);
     perror("Do_copyover: execl");
     send_to_user("ERROR: Copyover failed!\n\r", usr);

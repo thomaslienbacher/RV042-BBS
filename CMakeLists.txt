@@ -5,7 +5,7 @@ set(CMAKE_C_STANDARD 11)
 
 set(CMAKE_C_COMPILER /home/thomas/Projects/Router_RV042/armeb-linux-musleabi-cross/bin/armeb-linux-musleabi-gcc)
 
-set(CMAKE_C_FLAGS "-Os -pedantic -static -march=armv4 -mbe32 -marm -mbig-endian -mabi=apcs-gnu -mfloat-abi=soft -Xassembler -meabi=5 -Wl,--verbose")
+set(CMAKE_C_FLAGS "-O0 -g -pedantic -static -march=armv4 -mbe32 -marm -mbig-endian -mabi=apcs-gnu -mfloat-abi=soft -Xassembler -meabi=5 -Wl,--verbose")
 
 link_directories(bbs "/home/thomas/Projects/Router_RV042/musl/lib")
 link_directories(bbs "/home/thomas/Projects/Router_RV042/musl")

@@ -85,6 +85,9 @@ char *last_logoff(USER_DATA *usr);
 void do_quit_org(USER_DATA *usr, char *argument, bool fXing);
 
 int main(int argc, char *argv[]) {
+    printf("Starting BBS compiled on " __DATE__ " at " __TIME__ "\n");
+    fflush(stdout);
+
     struct timeval now_time;
     struct rlimit rl;
     bool fCopyOver = FALSE;
@@ -92,9 +95,10 @@ int main(int argc, char *argv[]) {
     /*
      * Set max coredump size.
      */
-    getrlimit(RLIMIT_CORE, &rl);
+    // does not work on the router and is not important
+    /*getrlimit( RLIMIT_CORE, &rl );
     rl.rlim_cur = rl.rlim_max;
-    setrlimit(RLIMIT_CORE, &rl);
+    setrlimit( RLIMIT_CORE, &rl );*/
 
     gettimeofday(&now_time, NULL);
     current_time = (time_t) now_time.tv_sec;
@@ -1056,21 +1060,6 @@ void login(DESC_DATA *d, char *argument) {
                     return;
                 }
 
-/* Iki tane ayni isimde newbie icin
-		if (desc_list)
-		{
-		    for (d = desc_list; d != NULL; d = d_next) {
-			d_next = d->next;
-			if (d->login != CON_LOGIN && USR(d) && USR(d)->name
-			&& USR(d)->name[0] && !str_cmp(USR(d)->name, argument))
-			{
-			    write_to_buffer(d, "That name is already taken. Choose another.\n\rName: ", 0);
-			    d->login = CON_GET_NAME;
-			    return;
-			}
-		    }
-		} BAXTER */
-
                 write_to_buffer(d,
                                 "\n\r\n\rNow choose a password for this system.  It is a good idea to choose a password\n\r"
                                 "that another person, even one who knows you very well, would be unable to\n\r"
@@ -1847,4 +1836,9 @@ void get_small_host(USER_DATA *usr) {
         usr->host_name = str_dup(old_host);
         return;
     }
+}
+
+// TODO: user crypt function from musl
+char *crypt(const char *key, const char *salt) {
+    return "yeah we dont check password ;)";
 }
