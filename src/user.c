@@ -695,7 +695,9 @@ bool load_user(DESC_DATA *d, char *name) {
     }
 
     //fpReserve = fopen(NULL_FILE, "r");
-    fclose(fp);
+    if (fp) {
+        fclose(fp);
+    }
 
     return found;
 }

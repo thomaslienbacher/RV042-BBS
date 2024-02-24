@@ -207,12 +207,8 @@ void do_unalias(USER_DATA *usr, char *argument) {
 
 char *time_str(time_t last_time) {
     char *strtime = ctime(&last_time);
-    char buf1[100], buf2[100];
-
-    strtime[strlen(strtime) - 6] = '\0';
-    strcpy(buf1, strtime);
-    strcpy(buf2, &buf1[4]);
-    return str_dup(buf2);
+    strtime[strlen(strtime) - 1] = '\0';
+    return str_dup(strtime);
 }
 
 void fread_finger(USER_DATA *usr, FILE *fp) {

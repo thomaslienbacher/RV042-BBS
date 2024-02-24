@@ -2509,12 +2509,12 @@ void edit_note_subject(USER_DATA *usr, char *argument) {
  */
 void edit_send_note(USER_DATA *usr) {
     char buf[INPUT];
-    char *Strtime;
+    char *strtime;
     int msg_150, msg;
 
-    Strtime = ctime(&current_time);
-    Strtime[strlen(Strtime) - 9] = '\0';
-    usr->pNote->date = str_dup(Strtime);
+    strtime = ctime(&current_time);
+    strtime[strlen(strtime) - 1] = '\0';
+    usr->pNote->date = str_dup(strtime);
     usr->pNote->stamp = current_time;
     usr->pNote->vnum = ++usr->pBoard->last_vnum;
     usr->total_note++;

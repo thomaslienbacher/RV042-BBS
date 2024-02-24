@@ -38,6 +38,7 @@
 #include <arpa/inet.h>
 #include <sys/resource.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include "telnet.h"
 
 #include "bbs.h"
@@ -53,7 +54,7 @@ FILE *fpReserve;
 bool bbs_down;
 time_t current_time;
 time_t boot_time_t;
-char boot_time[STRING_LENGTH];
+char boot_time[32];
 int control, port;
 
 void bbs_loop(int control);
@@ -84,6 +85,8 @@ char *last_logoff(USER_DATA *usr);
 
 void do_quit_org(USER_DATA *usr, char *argument, bool fXing);
 
+void dir_exists(const char *dir);
+
 int main(int argc, char *argv[]) {
     printf("Starting BBS compiled on " __DATE__ " at " __TIME__ "\n");
     fflush(stdout);
@@ -103,7 +106,10 @@ int main(int argc, char *argv[]) {
     gettimeofday(&now_time, NULL);
     current_time = (time_t) now_time.tv_sec;
     boot_time_t = current_time;
-    strcpy(boot_time, ctime(&current_time));
+    char *strtime = ctime(&current_time);
+    strtime[strlen(strtime) - 1] = '\0';
+    sprintf(log_buf, "Boot time: %s", strtime);
+    log_string(log_buf);
 
     if ((fpReserve = fopen(NULL_FILE, "r")) == NULL) {
         perror(NULL_FILE);
@@ -130,6 +136,15 @@ int main(int argc, char *argv[]) {
     if (!fCopyOver)
         control = init_socket(port);
 
+    // check and create necessary directories
+    dir_exists(TEMP_DIR);
+    dir_exists(USER_DIR);
+    dir_exists(CLIP_DIR);
+    dir_exists(NOTE_DIR);
+    dir_exists(MAIL_DIR);
+    dir_exists("data");
+    dir_exists("log");
+
     boot_dbase();
     sprintf(log_buf, "BBS is ready to rock on port %d.", port);
     log_string(log_buf);
@@ -142,6 +157,19 @@ int main(int argc, char *argv[]) {
     log_string("Normal termination of bbs.");
     exit(0);
     return 0;
+}
+
+void dir_exists(const char *name) {
+    int dir = open(name, O_DIRECTORY);
+    if (dir == -1) {
+        dir = mkdir(name, S_IRWXU);
+        sprintf(log_buf, "Created nonexistent dir '%s' ret=%d", name, dir);
+        log_string(log_buf);
+    } else {
+        sprintf(log_buf, "Dir '%s' exists fd=%d", name, dir);
+        log_string(log_buf);
+    }
+    close(dir);
 }
 
 int init_socket(int port) {
@@ -353,6 +381,7 @@ void bbs_loop(int control) {
                             break;
                     }
                 } else
+
                     login(d, d->incomm);
                 d->incomm[0] = '\0';
             }
@@ -686,7 +715,7 @@ bool process_output(DESC_DATA *d, bool fPrompt) {
                 else
                     print_to_user(USR(d),
                                   "\033[0;0;30;47m--- More --- (%d%%)\033[0;0;37;40m "
-                                  "('h' for help) ", 100 * shown_lines / total_lines);
+                                  "('h' for help)\033[m ", 100 * shown_lines / total_lines);
             } else {
                 if (!str_cmp(USR(d)->lastCommand, "mx") && USR(d))
                     print_to_user(USR(d), "More (%d%%) [<cr>,p,r,q,?] ",
@@ -1087,7 +1116,7 @@ void login(DESC_DATA *d, char *argument) {
             user_list = usr;
             d->login = CON_LOGIN;
             do_help(usr, "motd");
-            sprintf(buf, "Last login %s until %s from %s.#x\n\r\n\r"
+            sprintf(buf, "Last login %s until %s\n\rFrom %s***#x\n\r\n\r"
                          "You are in the lobby now.\n\r",
                     last_logon(usr), last_logoff(usr), usr->host_name);
             send_to_user(buf, usr);
@@ -1144,7 +1173,7 @@ void login(DESC_DATA *d, char *argument) {
             sprintf(log_buf, "%s@%s has connected", usr->name, d->host);
             log_string(log_buf);
             syslog(log_buf, usr);
-            sprintf(buf, "Last login %s until %s from %s.#x\n\r\n\r"
+            sprintf(buf, "Last login %s until %s\n\rFrom %s***#x\n\r\n\r"
                          "You are in the lobby now.\n\r",
                     last_logon(usr), last_logoff(usr), usr->host_name);
             send_to_user(buf, usr);
@@ -1695,22 +1724,14 @@ void show_string(struct desc_data *d, char *input, bool fMx) {
 
 char *last_logon(USER_DATA *usr) {
     char *strtime = ctime(&usr->last_logon);
-    char buf1[100], buf2[100];
-
-    strtime[strlen(strtime) - 6] = '\0';
-    strcpy(buf1, strtime);
-    strcpy(buf2, &buf1[4]);
-    return str_dup(buf2);
+    strtime[strlen(strtime) - 1] = '\0';
+    return str_dup(strtime);
 }
 
 char *last_logoff(USER_DATA *usr) {
     char *strtime = ctime(&usr->last_logoff);
-    char buf1[100], buf2[100];
-
-    strtime[strlen(strtime) - 6] = '\0';
-    strcpy(buf1, strtime);
-    strcpy(buf2, &buf1[4]);
-    return str_dup(buf2);
+    strtime[strlen(strtime) - 1] = '\0';
+    return str_dup(strtime);
 }
 
 int color(char type, char *string) {

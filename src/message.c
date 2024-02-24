@@ -26,6 +26,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <time.h>
 
 #include "bbs.h"
 
@@ -62,7 +63,7 @@ void set_xing_time(USER_DATA *usr) {
 
     usr->xing_time = str_dup("");
     strtime = ctime(&current_time);
-    strtime[strlen(strtime) - 9] = '\0';
+    strtime[strlen(strtime) - 1] = '\0';
     usr->xing_time = str_dup(strtime);
 }
 

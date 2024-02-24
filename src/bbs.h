@@ -461,8 +461,6 @@ extern char log_buf[];
 extern char str_empty[1];
 extern time_t current_time;
 extern time_t boot_time_t;
-// TODO: why is this buffer so large?
-extern char boot_time[STRING_LENGTH];
 extern int last_note_vnum;
 extern FILE *fpReserve;
 extern bool fBootDbase;

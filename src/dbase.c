@@ -1615,6 +1615,7 @@ char *fget_string(FILE *pFile) {
     return (pOutput);
 }
 
+// TODO: can we remove this function ??
 void do_test(USER_DATA *usr, char *argument) {
     FILE *pFile;
 

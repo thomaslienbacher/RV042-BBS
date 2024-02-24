@@ -182,7 +182,7 @@ void func_list_mail(USER_DATA *usr) {
 
     buffer = new_buf();
 
-    add_buf(buffer, "  Num Date            From            Subject\n\r");
+    add_buf(buffer, "  Num Date                     From            Subject\n\r");
     for (pMail = usr->pMailFirst; pMail; pMail = pMail->next) {
         if (pMail) {
             sprintf(buf, "%s %3d %s %-15s %s\n\r",
