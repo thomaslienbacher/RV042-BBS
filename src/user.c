@@ -392,8 +392,8 @@ void save_user(USER_DATA *usr) {
                 usr->used + (int) (current_time - usr->age));
         fprintf(fp, "HostNam %s %s~\n", usr->host_name, usr->host_small);
         fprintf(fp, "TotalLN %d %d\n", usr->total_login, usr->total_note);
-        fprintf(fp, "Llon %ld\n", usr->last_logon);
-        fprintf(fp, "Loff %ld\n", usr->last_logoff);
+        fprintf(fp, "Llon %lld\n", usr->last_logon);
+        fprintf(fp, "Loff %lld\n", usr->last_logoff);
         fprintf(fp, "Rnam %s~\n", usr->real_name);
         fprintf(fp, "Emai %s~\n", usr->email);
         fprintf(fp, "Aema %s~\n", usr->alt_email);
@@ -922,12 +922,3 @@ void free_buffer(USER_DATA *pUser) {
     free_buf(pUser->pBuffer);
     return;
 }
-
-// TODO: remove function to reduce complexity
-bool is_turkish(USER_DATA *usr) {
-    if (IS_TOGGLE(usr, TOGGLE_TURK))
-        return TRUE;
-
-    return FALSE;
-}
-

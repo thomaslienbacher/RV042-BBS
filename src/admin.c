@@ -805,9 +805,9 @@ void save_validates(void) {
         fprintf(fp, "Email    %s~\n", pValidate->email);
         fprintf(fp, "Realname %s~\n", pValidate->real_name);
         fprintf(fp, "SendedBy %s~\n", pValidate->sended_by);
-        fprintf(fp, "SendedTm %ld\n", pValidate->sended_time);
+        fprintf(fp, "SendedTm %lld\n", pValidate->sended_time);
         fprintf(fp, "Key      %d\n", pValidate->key);
-        fprintf(fp, "Time     %ld\n", pValidate->valid_time);
+        fprintf(fp, "Time     %lld\n", pValidate->valid_time);
         fprintf(fp, "End\n");
     }
 
@@ -821,6 +821,7 @@ void add_validate(USER_DATA *usr) {
     int key;
 
     key = number_range(10000, 99999);
+    // TODO: are these if checks necessary ??
     if (key < 10000) key = 10895;
     if (key > 99999) key = 84719;
     usr->key = key;

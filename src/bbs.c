@@ -88,7 +88,7 @@ void do_quit_org(USER_DATA *usr, char *argument, bool fXing);
 void dir_exists(const char *dir);
 
 int main(int argc, char *argv[]) {
-    printf("Starting BBS compiled on " __DATE__ " at " __TIME__ "\n");
+    puts("Starting BBS compiled on " __DATE__ " at " __TIME__);
     fflush(stdout);
 
     struct timeval now_time;
@@ -1381,6 +1381,7 @@ void login(DESC_DATA *d, char *argument) {
     }
 }
 
+// TODO: remove this function
 bool legal_name(char *name) {
     if (is_name_full(name, "god Allah sik yarrak fuck fucker dick suck deneme ege"))
         return FALSE;

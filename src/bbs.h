@@ -161,7 +161,7 @@ typedef void DO_FUN(USER_DATA *usr, char *argument);
 #define TOGGLE_WARN        (F)
 #define TOGGLE_FEEL        (G)
 #define TOGGLE_ADM        (H)
-#define TOGGLE_TURK        (I)
+#define TOGGLE_SPECIAL        (I) // used to be toggle turk
 #define TOGGLE_INVIS        (J)
 
 #define BBS_NEWLOCK        (A)
@@ -780,8 +780,6 @@ bool isBusySelf(USER_DATA *usr);
 void add_buffer(USER_DATA *pUser, char *pBuffer);
 
 void free_buffer(USER_DATA *pUser);
-
-bool is_turkish(USER_DATA *usr);
 
 /*
  * Buffer valid states.
